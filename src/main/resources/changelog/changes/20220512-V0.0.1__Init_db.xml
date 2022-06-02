@@ -1,0 +1,145 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.9.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
+    <property name="uuid_function" value="uuid_generate_v4()" dbms="postgresql"/>
+    <property name="uuidType" value="uuid" dbms="h2, postgresql"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="floatType" value="float4" dbms="postgresql, h2"/>
+
+    <changeSet author="alfonso" id="1609965525352-1">
+        <createTable tableName="users">
+            <column name="id" type="${uuidType}" defaultValueComputed="${uuid_function}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="document_id" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="birthdate" type="date">
+                <constraints nullable="true" />
+            </column>
+            <column name="created_date" type="timestamp" defaultValueDate="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="20220512113351-1" author="alfonso">
+        <createTable tableName="bank">
+            <column name="id" type="${uuidType}" defaultValueComputed="${uuid_function}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="address" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="country" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="created_date" type="timestamp" defaultValueDate="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="20220512113352-1" author="alfonso">
+        <createTable tableName="debt">
+            <column name="id" type="${uuidType}" defaultValueComputed="${uuid_function}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="number" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="type" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="amount" type="decimal(21,2)">
+                <constraints nullable="true" />
+            </column>
+            <column name="total" type="decimal(21,2)">
+                <constraints nullable="true" />
+            </column>
+            <column name="dues" type="integer">
+                <constraints nullable="true" />
+            </column>
+            <column name="revenue" type="${floatType}">
+                <constraints nullable="true" />
+            </column>
+            <column name="paid_out" type="decimal(21,2)">
+                <constraints nullable="true" />
+            </column>
+            <column name="user_id" type="${uuidType}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="true" />
+            </column>
+            <column name="bank_id" type="${uuidType}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="true" />
+            </column>
+            <column name="created_date" type="timestamp" defaultValueDate="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="20220512113353-2" author="alfonso">
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="debt"
+                                 constraintName="fk_debt__user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
+    </changeSet>
+
+    <changeSet id="20220512113354-2" author="alfonso">
+
+        <addForeignKeyConstraint baseColumnNames="bank_id"
+                                 baseTableName="debt"
+                                 constraintName="fk_debt__bank_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="bank"/>
+    </changeSet>
+
+    <changeSet id="20210208200244-1-data" author="alfonso">
+        <loadData
+            file="changelog/changes/data/user.csv"
+            separator=";"
+            tableName="users">
+            <column name="name" type="string"/>
+            <column name="document_id" type="string"/>
+            <column name="birthdate" type="date"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="20210208200245-1-data" author="alfonso">
+        <loadData
+                file="changelog/changes/data/bank.csv"
+                separator=";"
+                tableName="bank">
+            <column name="name" type="string"/>
+            <column name="code" type="string"/>
+            <column name="address" type="string"/>
+            <column name="country" type="string"/>
+        </loadData>
+    </changeSet>
+    <changeSet id="20210208200246-1-data" author="alfonso">
+        <loadData
+                file="changelog/changes/data/debt.csv"
+                separator=";"
+                tableName="debt">
+            <column name="number" type="string"/>
+            <column name="type" type="string"/>
+            <column name="amount" type="numeric"/>
+            <column name="total" type="numeric" />
+            <column name="dues" type="numeric"/>
+            <column name="revenue" type="numeric" />
+            <column name="paid_out" type="numeric"/>
+            <column name="user_id" type="string"/>
+            <column name="bank_id" type="string"/>
+        </loadData>
+    </changeSet>
+</databaseChangeLog>
